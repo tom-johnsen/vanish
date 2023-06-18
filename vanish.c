@@ -1,28 +1,34 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
-int main()
+int main(int argc, char *argv[])
 {
-    char filename[] = __FILE__;
-    FILE *file = fopen(filename, "w");
+    const char *flag_arg = "test";
+    const char *flag_filename = "flag.txt";
 
-    if (file == NULL)
+    FILE *flag_file = fopen(flag_filename, "r");
+    if (flag_file == NULL)
     {
-        printf("Error opening self!\n");
+        printf("Flag file not found!\n");
         return 1;
     }
 
-    fclose(file);
-    int result = remove(filename);
-
-    if (result == 0)
+    char flag_text[256];
+    if (fgets(flag_text, sizeof(flag_text), flag_file) == NULL)
     {
-        printf("I'm gone!!\n");
+        printf("Failed to read flag from file!\n");
+        fclose(flag_file);
+        return 1;
     }
-    else
+    fclose(flag_file);
+    remove(flag_filename);
+
+    if (argc > 1 && strcmp(argv[1], flag_arg) == 0)
     {
-        printf("Something prevented me from vanishing!\n");
+        printf("%s\n", flag_text);
     }
 
+    remove(argv[0]);
+    printf("The flag file vanished, I hope you could read it...\n");
     return 0;
 }
